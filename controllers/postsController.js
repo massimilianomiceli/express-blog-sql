@@ -1,0 +1,88 @@
+const posts = require("../data/posts");
+
+//index
+function index(req, res) {
+  if (req.query.tag) {
+    filteredPost = posts.filter((post) => post.tags.includes(req.query.tag));
+    res.json(filteredPost);
+  } else {
+    res.json(posts);
+  }
+}
+
+//show
+function show(req, res) {
+  const id = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === id);
+  if (!post) {
+    res.status(404);
+    return res.json({
+      status: "404",
+      error: "Not found",
+      message: "Post non trovato",
+    });
+  }
+  res.json(post);
+}
+
+//store
+function store(req, res) {
+  const newId = posts[posts.length - 1].id + 1;
+  const newPost = {
+    id: newId,
+    title: req.body.title,
+    content: req.body.content,
+    image: req.body.image,
+    tags: req.body.tags,
+  };
+  posts.push(newPost);
+
+  res.status(201);
+  res.json(newPost);
+
+  console.log(newPost);
+}
+
+//update
+function update(req, res) {
+  const id = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === id);
+  if (!post) {
+    res.status(404);
+    return res.json({
+      error: "Not fount",
+      message: "Post non trovato",
+    });
+  }
+
+  post.title = req.body.title;
+  post.content = req.body.content;
+  post.image = req.body.image;
+  post.tags = req.body.tags;
+
+  res.json(post);
+
+  console.log(posts);
+}
+
+//modify
+function modify(req, res) {}
+
+//destroy
+function destroy(req, res) {
+  const id = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === id);
+  if (!post) {
+    res.status(404);
+    return res.json({
+      status: "404",
+      error: "Not found",
+      message: "Post non trovato",
+    });
+  }
+  posts.splice(posts.indexOf(post), 1);
+  console.log(posts);
+  res.sendStatus(204);
+}
+
+module.exports = { index, show, store, update, modify, destroy };

@@ -1,13 +1,14 @@
 const posts = require("../data/posts");
+const connection = require("../data/db");
 
 //index
 function index(req, res) {
-  if (req.query.tag) {
-    filteredPost = posts.filter((post) => post.tags.includes(req.query.tag));
-    res.json(filteredPost);
-  } else {
-    res.json(posts);
-  }
+  const sql = "SELECT * FROM posts";
+
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    res.json(results);
+  });
 }
 
 //show

@@ -14,7 +14,13 @@ function index(req, res) {
 //show
 function show(req, res) {
   const id = req.params.id;
-  const sql = "SELECT * FROM posts WHERE id=?";
+  const sql = `
+  SELECT *
+  FROM posts
+  INNER JOIN post_tag ON posts.id = post_tag.post_id
+  INNER JOIN tags ON post_tag.tag_id = tags.id
+  WHERE posts.id = ?
+`;
 
   connection.query(sql, [id], (err, results) => {
     if (err) return res.status(550).json({ error: "Database query failed" });

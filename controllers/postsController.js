@@ -33,7 +33,6 @@ function show(req, res) {
 //store
 function store(req, res) {
   const { title, content, image } = req.body;
-
   const sql = "INSERT INTO posts (title, content, image) VALUES (?, ?, ?)";
 
   connection.query(sql, [title, content, image], (err, results) => {
@@ -45,24 +44,14 @@ function store(req, res) {
 
 //update
 function update(req, res) {
-  const id = parseInt(req.params.id);
-  const post = posts.find((post) => post.id === id);
-  if (!post) {
-    res.status(404);
-    return res.json({
-      error: "Not fount",
-      message: "Post non trovato",
-    });
-  }
+  const { id } = req.params;
+  const { title, content, image } = req.body;
+  const sql = "UPDATE posts SET title=?, content=?, image=? WHERE id=?";
 
-  post.title = req.body.title;
-  post.content = req.body.content;
-  post.image = req.body.image;
-  post.tags = req.body.tags;
-
-  res.json(post);
-
-  console.log(posts);
+  connection.query(sql, [title, content, image, id], (err) => {
+    if (err) return res.status(500).json({ error: "Failed to update post" });
+    res.json({ message: "Post update successfully!" });
+  });
 }
 
 //modify
